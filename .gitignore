@@ -1,3 +1,4 @@
 /local_test
 /venv
 .idea
+*.pyc

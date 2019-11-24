@@ -1,9 +1,13 @@
 import logging
 import os
 import time
+import platform
 
 
-LOG_DIR = '/tmp/htekPhoneLog/'
+if platform.system() == 'Windows':
+    LOG_DIR = r'C:\\Documents\\htekPhoneLog\\'
+elif platform.system() == 'Linux':
+    LOG_DIR = '/tmp/htekPhoneLog/'
 now_month = time.ctime().split(' ')[1]
 now_date = time.ctime().split(' ')[2]
 now_time = time.ctime().split(' ')[3].replace(':', '')

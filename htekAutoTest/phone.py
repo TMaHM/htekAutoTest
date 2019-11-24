@@ -12,8 +12,9 @@ import datetime
 
 import requests
 
-from .log import log
-from .typing import _type_check
+from htekAutoTest.log import log
+from htekAutoTest.typing import _type_check
+from htekAutoTest.model import get_phone_attr
 
 
 class MSGController(object):
@@ -46,13 +47,24 @@ class Phone(MSGController):
     """
 
     def __init__(self,
-                 ip=None, ext=None, line=None,
+                 ip: str = None, ext: str = None, line=None,
                  web_usr='admin', web_pwd='admin',
                  model=None):
-
         # 参数合法性校验
         ip = ip if _type_check(ip, 'ip') else sys.exit(-1)
-
+        ext = ext if _type_check(ext, 'ext') else sys.exit(-1)
+        if model is not None:
+            model = model
+            try:
+                lines, dsskeys, hardkeys, lcd_size = get_phone_attr(model)
+            except TypeError:
+                log.war('This model {} has not defined in :dict:`_model`, thus some functions will not be used.')
+                lines, dsskeys, hardkeys, lcd_size = None, None, None, None
+                pass
+        else:
+            log.war('This model {} has not defined in :dict:`_model`, thus some functions will not be used.')
+            lines, dsskeys, hardkeys, lcd_size = None, None, None, None
+        line = line if _type_check(line, 'line') else 1
 
         self.ip = ip
         self.ext = ext
@@ -61,15 +73,11 @@ class Phone(MSGController):
         self.pwd = web_pwd
         self.model = model
 
-
-
-
     def dial(self):
         self.send_cmd()
         pass
 
     def press_key(self):
-
         pass
 
 
