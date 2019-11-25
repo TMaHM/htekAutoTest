@@ -30,5 +30,5 @@ def get_phone_attr(model):
         return None
 
 
-line, dsskeys, hardkeys, lcd_size = get_phone_attr('uc9132')
-print(line, dsskeys, hardkeys, lcd_size)
+# line, dsskeys, hardkeys, lcd_size = get_phone_attr('uc9132')
+# print(line, dsskeys, hardkeys, lcd_size)
