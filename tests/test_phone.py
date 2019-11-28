@@ -10,9 +10,10 @@ import pytest
 
 from htekAutoTest.phone import Phone
 from htekAutoTest.phone import MSGController
+from htekAutoTest.phone import StatusChecker
 from htekAutoTest.exceptions import *
 
-device = Phone('10.3.3.191', '2054', 1)
+device = Phone('10.3.3.191', '2057', 1)
 
 
 @pytest.fixture
@@ -73,37 +74,83 @@ class TestPhone:
 
 class TestMSGController:
 
-    def test_prepare_dial(self, ):
-        ip = '10.3.3.191'
-        ext = '2057'
-        line = 1
-        web_usr = 'admin'
-        web_pwd = 'admin'
-
+    def test_prepare_prefix(self):
         param_dir = {
-            'ext': ext,
-            'line': line,
+            'ip': '10.3.3.191',
+            'web_usr': 'admin',
+            'web_pwd': 'admin',
+        }
+
+        expected = 'http://admin:admin@10.3.3.191'
+        controller = MSGController()
+
+        assert expected == controller._prepare_prefix(param_dir)
+
+    def test_prepare_dial(self, ):
+        param_dir = {
+            'ext': '2057',
+            'line': 1,
+            'ip': '10.3.3.191',
+            'web_usr': 'admin',
+            'web_pwd': 'admin',
         }
 
         expected = 'http://admin:admin@10.3.3.191/Phone_ActionURL&Command=1&Number=2054&Account=1'
         controller = MSGController()
-        controller._prepare_prefix(ip, web_usr, web_pwd)
+        controller._prepare_prefix(param_dir)
         assert expected == controller._prepare_dial(device, param_dir)
 
     def test_prepare_press(self):
-        ip = '10.3.3.191'
-        web_usr = 'admin'
-        web_pwd = 'admin'
+        param_dir = {
+            'ext': '2057',
+            'line': 1,
+            'ip': '10.3.3.191',
+            'web_usr': 'admin',
+            'web_pwd': 'admin',
+        }
         key = '1'
 
         expected = 'http://admin:admin@10.3.3.191/AutoTest&keyboard=1'
         controller = MSGController()
-        controller._prepare_prefix(ip, web_usr, web_pwd)
+        controller._prepare_prefix(param_dir)
         assert expected == controller._prepare_press(key)
 
-    def test_send(self):
-        url = 'http://admin:admin@10.3.3.191/AutoTest&keyboard=1'
-        expected = 200
+    def test_prepare_check_status(self):
+        param_dir = {
+            'ip': '10.3.3.191',
+            'web_usr': 'admin',
+            'web_pwd': 'admin'
+        }
+
+        expected = 'http://admin:admin@10.3.3.191/AutoTest&autoverify=STATE=2'
 
         controller = MSGController()
-        assert expected == controller._send(url)
+        controller._prepare_prefix(param_dir)
+        assert expected == controller._prepare_check_status('outgoing')
+
+    def test_send_cmd(self):
+        cmd = 'dial'
+        obj = device
+        param_dir = {
+            'ip': '10.3.3.192',
+            'ext': '2054',
+            'web_usr': 'admin',
+            'web_pwd': 'admin',
+            'line': 3
+        }
+
+        controller = MSGController()
+        controller._prepare_prefix(param_dir)
+        controller._send_cmd(cmd, obj, param_dir)
+
+
+class TestStatusChecker:
+
+    def test_query_parsing(self):
+        status = 'outgoing'
+        model = 'uc912'
+        img = '../ext/temp_img/test_outgoing.bmp'
+        dst_number = '2054'
+
+        status_checker = StatusChecker()
+        assert status_checker._query_parsing(status, model, img, dst_number) is True

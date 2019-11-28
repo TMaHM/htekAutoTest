@@ -3,6 +3,8 @@
 The ``typing`` model will check the legality of the arguments.
 """
 
+import os
+
 from htekAutoTest.log import log
 
 
@@ -98,3 +100,10 @@ def _format_check(*arg, arg_type, ):
         else:
             log.error('Type of argument `line` should be :int:, but you give {}'.format(type(_line)))
             return False
+
+
+def _path_check(path):
+    if not os.path.exists(path):
+        os.mkdir(path)
+    else:
+        pass
