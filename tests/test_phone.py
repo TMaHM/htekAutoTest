@@ -112,8 +112,8 @@ class TestMSGController:
 
         expected = 'http://admin:admin@10.3.3.191/AutoTest&keyboard=1'
         controller = MSGController()
-        controller._prepare_prefix(param_dir)
-        assert expected == controller._prepare_press(key)
+        # controller._prepare_prefix(param_dir)
+        assert expected == controller._prepare_press(key, param_dir)
 
     def test_prepare_check_status(self):
         param_dir = {
@@ -125,8 +125,8 @@ class TestMSGController:
         expected = 'http://admin:admin@10.3.3.191/AutoTest&autoverify=STATE=2'
 
         controller = MSGController()
-        controller._prepare_prefix(param_dir)
-        assert expected == controller._prepare_check_status('outgoing')
+        # controller._prepare_prefix(param_dir)
+        assert expected == controller._prepare_check_status('outgoing', param_dir)
 
     def test_send_cmd(self):
         cmd = 'dial'
@@ -146,7 +146,7 @@ class TestMSGController:
 
 class TestStatusChecker:
 
-    def test_query_parsing(self):
+    def test_query_ocr_parsing(self):
         status = 'outgoing'
         model = 'uc912'
         img = '../ext/temp_img/test_outgoing.bmp'
